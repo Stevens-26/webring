@@ -38,7 +38,7 @@ you **must** have an element with ID "ring" in order to sucessfully output your 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link rel="icon" type="image/x-icon" href="/assets/icons/favicon.ico">
-    <script type="module" src="https://sitring.eric.si/ring.js?id=YOUR_ID_HERE" id="webring"><script>
+    <script type="module" src="https://sitring.eric.si/webring.js?id=YOUR_ID_HERE" id="webring"><script>
     <title>Webring</title>
   </head>
 
