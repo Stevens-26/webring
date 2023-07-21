@@ -27,7 +27,7 @@ GET `/id/neighbors` will return info about the left and right node.
 You can easily show your webring through placing the following in your ```<head>``` tag
 in your HTML file:
 ```
-<script type="module" src="https://sitring.eric.si/ring.js?id=YOUR_ID_HERE" id="webring"><script>
+<script type="module" src="https://sitring.eric.si/webring.js?id=YOUR_ID_HERE" id="webring"><script>
 ```
 It is important that you have the script ID as "webring" in order to query your ID succesfully. Additionally,
 you **must** have an element with ID "ring" in order to sucessfully output your webring links. Here is an example:
