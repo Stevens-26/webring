@@ -2,7 +2,7 @@ The Stevens Students Webring
 
 Learn what a webring is [here](https://en.m.wikipedia.org/wiki/Webring)!
 
-API is hosted at https://sit26ring.eric.si
+API is hosted at https://sitring.eric.si
 
 ALL MAJOR&ALUMS WELCOME! 
 
