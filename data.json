@@ -2,6 +2,8 @@
     {
         "id": "eric",
         "name": "Tianyu (Eric) Zhu",
-        "url": "https://ericz.me"
+        "url": "https://ericz.me",
+        "rss": "https://ericz.me/rss.xml",
+        "atom": "https://ericz.me/rss.atom"
     }
 ]
