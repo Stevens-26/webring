@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install jq
-        run: apt install -y jq
+        run: sudo apt install -y jq
 
       - name: Validate json
         run: jq . data.json
