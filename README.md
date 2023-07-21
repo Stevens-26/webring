@@ -1,5 +1,11 @@
 The Stevens Students Webring
 
+Learn what a webring is [here](https://en.m.wikipedia.org/wiki/Webring)!
+
+API is hosted at https://sit26ring.eric.si
+
+ALL MAJOR&ALUMS WELCOME! 
+
 Feel free to make a PR to add yourself to data.json if you are in any way
 affiliated with Stevens Institute of Technology.
 
