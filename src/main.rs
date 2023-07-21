@@ -17,6 +17,7 @@ use axum::{
 struct Node {
     id: String,
     name: String,
+    url: String,
     rss: Option<String>,
     atom: Option<String>,
 }
