@@ -40,7 +40,7 @@ async fn main() {
 async fn get_all(State(ring): State<Vec<Node>>) -> (StatusCode, HeaderMap, String) {
     let mut resp_header = HeaderMap::new();
     resp_header.insert("Content-Type", "application/json".parse().unwrap());
-    resp_header.insert("Access-Control-Allow-Headers", "Accept".parse().unwrap());
+    resp_header.insert("Access-Control-Allow-Origin", "Accept".parse().unwrap());
     if let Ok(string) = serde_json::to_string(&ring) {
         (StatusCode::OK, resp_header, string)
     } else {
@@ -53,7 +53,7 @@ async fn get_all(State(ring): State<Vec<Node>>) -> (StatusCode, HeaderMap, Strin
 async fn get_node(Path(name): Path<String>, State(ring): State<Vec<Node>>) -> (StatusCode, HeaderMap, String) {
     let mut resp_header = HeaderMap::new();
     resp_header.insert("Content-Type", "application/json".parse().unwrap());
-    resp_header.insert("Access-Control-Allow-Headers", "Accept".parse().unwrap());
+    resp_header.insert("Access-Control-Allow-Origin", "Accept".parse().unwrap());
     if let Some(node) = get(name, ring) {
         (StatusCode::OK, resp_header, serde_json::to_string(&node).unwrap())
     } else {
@@ -67,7 +67,7 @@ async fn get_node(Path(name): Path<String>, State(ring): State<Vec<Node>>) -> (S
 async fn get_neighbor(Path(name): Path<String>, State(ring): State<Vec<Node>>) -> (StatusCode, HeaderMap, String) {
     let mut resp_header = HeaderMap::new();
     resp_header.insert("Content-Type", "application/json".parse().unwrap());
-    resp_header.insert("Access-Control-Allow-Headers", "Accept".parse().unwrap());
+    resp_header.insert("Access-Control-Allow-Origin", "Accept".parse().unwrap());
     if let Some(node) = get(name, ring.to_owned()) {
         let index = ring.iter().position(|x| x.id == node.id).unwrap();
         let prev = ring.get((index + ring.len() - 1) % ring.len()).unwrap();
