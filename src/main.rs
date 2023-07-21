@@ -4,11 +4,11 @@
  */
 use std::fs;
 use serde::{Deserialize,Serialize};
-use serde_json;
+use serde_json::json;
 use axum::{
     routing,
     extract::{Path,State},
-    http::StatusCode,
+    http::{StatusCode,header::HeaderMap},
     Router
 };
 
@@ -36,24 +36,31 @@ async fn main() {
 }
 
 // get info ab a node
-async fn get_node(Path(name): Path<String>, State(ring): State<Vec<Node>>) -> (StatusCode, String) {
+async fn get_node(Path(name): Path<String>, State(ring): State<Vec<Node>>) -> (StatusCode, HeaderMap, String) {
+    let mut resp_header = HeaderMap::new();
+    resp_header.insert("Content-Type", "application/json".parse().unwrap());
     if let Some(node) = get(name, ring) {
-        (StatusCode::OK, serde_json::to_string(&node).unwrap())
+        (StatusCode::OK, resp_header, serde_json::to_string(&node).unwrap())
     } else {
-        (StatusCode::NOT_FOUND, "Not Found".to_string())
+        // make a simple json with error: not found
+        let resp = json!({"Error": "Not Found"}).to_string();
+        (StatusCode::NOT_FOUND, resp_header, resp)
     }
 }
 
 // get the neighbors of a ring node
-async fn get_neighbor(Path(name): Path<String>, State(ring): State<Vec<Node>>) -> (StatusCode, String) {
+async fn get_neighbor(Path(name): Path<String>, State(ring): State<Vec<Node>>) -> (StatusCode, HeaderMap, String) {
+    let mut resp_header = HeaderMap::new();
+    resp_header.insert("Content-Type", "application/json".parse().unwrap());
     if let Some(node) = get(name, ring.to_owned()) {
         let index = ring.iter().position(|x| x.id == node.id).unwrap();
         let prev = ring.get((index + ring.len() - 1) % ring.len()).unwrap();
         let next = ring.get((index + 1) % ring.len()).unwrap();
         let neighbors = vec![prev, next];
-        (StatusCode::OK, serde_json::to_string(&neighbors).unwrap())
+        (StatusCode::OK, resp_header, serde_json::to_string(&neighbors).unwrap())
     } else {
-        (StatusCode::NOT_FOUND, "Not Found".to_string())
+        let resp = json!({"Error": "Not Found"}).to_string();
+        (StatusCode::NOT_FOUND, resp_header, resp)
     }
 }
 
