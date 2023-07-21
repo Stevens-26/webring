@@ -5,5 +5,10 @@
         "url": "https://ericz.me",
         "rss": "https://ericz.me/rss.xml",
         "atom": "https://ericz.me/rss.atom"
+    },
+    {
+        "id": "josh_h",
+        "name": "Joshua Hizgiaev",
+        "url": "https://www.theautomata.net/"
     }
 ]
