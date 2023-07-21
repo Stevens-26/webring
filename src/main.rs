@@ -26,6 +26,7 @@ struct Node {
 async fn main() {
     let ring = parse();
     let app = Router::new()
+        .route("/", routing::get(get_all))
         .route("/:name", routing::get(get_node))
         .route("/:name/neighbors", routing::get(get_neighbor))
         .with_state(ring);
@@ -33,6 +34,18 @@ async fn main() {
         .serve(app.into_make_service())
         .await
         .unwrap();
+}
+
+// get the whole webring
+async fn get_all(State(ring): State<Vec<Node>>) -> (StatusCode, HeaderMap, String) {
+    let mut resp_header = HeaderMap::new();
+    resp_header.insert("Content-Type", "application/json".parse().unwrap());
+    if let Ok(string) = serde_json::to_string(&ring) {
+        (StatusCode::OK, resp_header, string)
+    } else {
+        let resp = json!({"Error": "Internal Server Error"}).to_string();
+        (StatusCode::INTERNAL_SERVER_ERROR, resp_header, resp)
+    }
 }
 
 // get info ab a node
