@@ -6,6 +6,8 @@ use std::fs;
 use rand::seq::SliceRandom;
 use serde::{Deserialize,Serialize};
 use serde_json::json;
+use tower_http::services::ServeFile;
+use mime;
 use axum::{
     routing,
     extract::{Path,State},
@@ -31,6 +33,7 @@ async fn main() {
         .route("/:name", routing::get(get_node))
         .route("/:name/neighbors", routing::get(get_neighbor))
         .route("/:name/random", routing::get(get_random))
+        .route("/webring.js", routing::get_service(ServeFile::new_with_mime("./js/webring.js", &mime::APPLICATION_JAVASCRIPT)))
         .with_state(ring);
     axum::Server::bind(&"0.0.0.0:3030".parse().unwrap())
         .serve(app.into_make_service())
