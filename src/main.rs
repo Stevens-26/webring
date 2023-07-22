@@ -100,8 +100,16 @@ async fn get_random(Path(name): Path<String>, State(ring): State<Vec<Node>>) -> 
     let mut resp_header = HeaderMap::new();
     resp_header.insert("Content-Type", "application/json".parse().unwrap());
     resp_header.insert("Access-Control-Allow-Origin", "*".parse().unwrap());
-    if let Some(_) = get(name.to_owned(), ring.to_owned()) {
-        let ring: Vec<Node> = ring.clone().iter().filter(|&node| node.id != name).cloned().collect();
+    if let Some(node) = get(name.to_owned(), ring.to_owned()) {
+        let index = ring.iter().position(|x| x.id == node.id).unwrap();
+        let prev = ring.get((index + ring.len() - 1) % ring.len()).unwrap();
+        let next = ring.get((index + 1) % ring.len()).unwrap();
+
+        let ring: Vec<Node> = ring.clone().iter()
+            .filter(|&node| node.id != name)
+            .filter(|&node| node.id != prev.id)
+            .filter(|&node| node.id != next.id)
+            .cloned().collect();
         let random: &Node = ring.choose(&mut rand::thread_rng()).unwrap();
         (StatusCode::OK, resp_header, serde_json::to_string(random).unwrap())
     } else {
