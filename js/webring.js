@@ -7,6 +7,8 @@
  * Make sure in ur html file you have a div with the id "ring" to place the webring in
  */
 var ring = [];
+var ringLinks = [];
+
 
 function getQuery() {
     return document.getElementById("webringjs").src.split("id=")[1]
@@ -47,9 +49,9 @@ async function parseNeighbors(){
     for(var i = 0; i < ring.length; i++) {
         createLinks(ring[i]);
     }
+    placeLinks(ringLinks);
 }
 
-var ringLinks = [];
 
 function createLinks(data){
     let link = window.document.createElement('a');
@@ -69,10 +71,6 @@ function createLinks(data){
     if(ringLinks.length < 5) {
         let bullet = document.createTextNode(" • ");
         ringLinks.push(bullet);
-    }
-
-    if(ringLinks.length === 5) {
-        placeLinks(ringLinks);
     }
 }
 
