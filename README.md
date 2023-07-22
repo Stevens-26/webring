@@ -36,7 +36,7 @@ you **must** have an element with ID "ring" in order to sucessfully output your 
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <script type="module" src="https://sitring.eric.si/webring.js?id=YOUR_ID_HERE" id="webring"><script>
+    <script type="module" src="https://sitring.eric.si/webring.js?id=YOUR_ID_HERE"="webringjs"></script>
   </head>
 
   <div id="webring">

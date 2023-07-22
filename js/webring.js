@@ -11,7 +11,7 @@ var ring = [];
 var id;
 
 function getQuery() {
-    return document.getElementById("webring").src.split("id=")[1]
+    return document.getElementById("webringjs").src.split("id=")[1]
 }
 
 async function getNeighbors() {
