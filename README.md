@@ -24,7 +24,8 @@ GET `/id/neighbors` will return info about the left and right node.
 
 ## Usage Static-Sites
 
-You can easily show your webring through placing the following in your ```<head>``` tag
+You can easily show your webring through placing javascript in your ```<head>``` tag
+and then creating a div.
 in your HTML file:
 ```
 <script type="module" src="https://sitring.eric.si/webring.js?id=YOUR_ID_HERE" id="webring"><script>
@@ -35,19 +36,14 @@ you **must** have an element with ID "ring" in order to sucessfully output your 
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link rel="icon" type="image/x-icon" href="/assets/icons/favicon.ico">
     <script type="module" src="https://sitring.eric.si/webring.js?id=YOUR_ID_HERE" id="webring"><script>
-    <title>Webring</title>
   </head>
 
-  <div id="ring">
-    <h1>Check out my friends!</h1>
+  <div id="webring">
+    <!-- the webring will automatically appear here -->
   </div>
 </html>
 ```
-Your links will be within the div with ID "ring".
 
 ## Other stuff
 

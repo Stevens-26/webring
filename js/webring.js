@@ -60,8 +60,8 @@ function createLinks(data){
 
 function placeLinks(ringLinks){
     //Insert an arrow as the first and last element of the array
-    let arrowLeft = document.createTextNode("<--");
-    let arrowRight = document.createTextNode("-->");
+    let arrowLeft = document.createTextNode("<-");
+    let arrowRight = document.createTextNode("->");
     ringLinks.unshift(arrowLeft);
     ringLinks.push(arrowRight);
 
