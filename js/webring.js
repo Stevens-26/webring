@@ -67,7 +67,7 @@ function placeLinks(ringLinks){
 
     //Insert the links into the DOM
     for(var i = 0; i < ringLinks.length; i++) {
-        document.getElementById("ring").appendChild(ringLinks[i]);
+        document.getElementById("webring").appendChild(ringLinks[i]);
     }
 }
 //Entry point
