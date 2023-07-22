@@ -6,16 +6,26 @@
  * <script id="webring" src="https://sitring.eric.si/js/webring.js?id=YOUR_ID_HERE"></script>
  * Make sure in ur html file you have a div with the id "ring" to place the webring in
  */
-var data; 
 var ring = [];
-var id;
 
 function getQuery() {
     return document.getElementById("webringjs").src.split("id=")[1]
 }
 
+async function getRandomNeighbors() {
+    try {
+        const response = await fetch("https://sitring.eric.si/eric/random", {
+            method: 'GET',
+        });
+        const randomNeighbor = await response.json();
+        return randomNeighbor;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 async function getNeighbors() {
-    const id = getQuery();
+    let id = getQuery();
     try {
         const response = await fetch(`https://sitring.eric.si/${id}/neighbors`, {
             method: 'GET',
@@ -28,10 +38,12 @@ async function getNeighbors() {
 }
 
 async function parseNeighbors(){
-    data = await getNeighbors();
-    for(var i = 0; i < data.length; i++) {
-        ring.push(data[i]);
-    }
+    let data = await getNeighbors();
+    let randomNeighbor = await getRandomNeighbors();
+    //Data will always be of length 2, so just push to array in constant time
+    ring.push(data[0]);
+    ring.push(randomNeighbor);
+    ring.push(data[1]);
     for(var i = 0; i < ring.length; i++) {
         createLinks(ring[i]);
     }
@@ -41,19 +53,25 @@ var ringLinks = [];
 
 function createLinks(data){
     let link = window.document.createElement('a');
-    link.href = data.url;
-    link.innerText = data.name;
-    link.target = "_blank";
-    ringLinks.push(link);
-
-    if (ringLinks.length === 1) {
-        // Insert • This site is part of the Stevens Students Webring • after the first link 
-        let ringText = window.document.createElement('span');
-        ringText.innerText = " • This site is part of the Stevens Students Webring • ";
-        ringLinks.push(ringText);
+    // Contant time opps
+    if(ringLinks.length === 2) {
+        link.href = data.url;
+        link.innerText = data.name;
+        link.innerHTML = "Random";
+        link.target = "_blank";
+        ringLinks.push(link);
+    } else {
+        link.href = data.url;
+        link.innerText = data.name;
+        link.target = "_blank";
+        ringLinks.push(link);
+    }
+    if(ringLinks.length < 5) {
+        let bullet = document.createTextNode(" • ");
+        ringLinks.push(bullet);
     }
 
-    if(ringLinks.length === 3) {
+    if(ringLinks.length === 5) {
         placeLinks(ringLinks);
     }
 }
@@ -69,6 +87,12 @@ function placeLinks(ringLinks){
     for(var i = 0; i < ringLinks.length; i++) {
         document.getElementById("webring").appendChild(ringLinks[i]);
     }
+    //Insert a new sentence into the DOM below the links
+    document.getElementById("webring").appendChild(document.createElement("br"));
+    let sentence = document.createTextNode("This website is part of the Stevens Students Webring.");
+    document.getElementById("webring").appendChild(sentence);
+
 }
+
 //Entry point
 parseNeighbors();
