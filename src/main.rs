@@ -33,18 +33,22 @@ async fn main() {
         .route("/:name/random", routing::get(get_random))
         .route("/webring.js", routing::get(get_js))
         .with_state(ring);
+
     axum::Server::bind(&"0.0.0.0:3030".parse().unwrap())
         .serve(app.into_make_service())
         .await
         .unwrap();
 }
 
-async fn get_js() -> (HeaderMap, String) {
+async fn get_js() -> (StatusCode, HeaderMap, String) {
     let mut resp_header = HeaderMap::new();
     resp_header.insert("Content-Type", "application/javascript".parse().unwrap());
     resp_header.insert("Access-Control-Allow-Origin", "*".parse().unwrap());
-    let js = fs::read_to_string("./js/webring.js").unwrap();
-    (resp_header, js)
+    if let Ok(js) = fs::read_to_string("./js/webring.js") {
+        return (StatusCode::OK, resp_header, js)
+    } else {
+        return (StatusCode::INTERNAL_SERVER_ERROR, resp_header, json!({"Error": "Internal Server Error"}).to_string())
+    }
 }
 
 // get the whole webring
