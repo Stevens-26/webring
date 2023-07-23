@@ -16,7 +16,7 @@ function getQuery() {
 
 async function getRandomNeighbors() {
     try {
-        const response = await fetch("https://sitring.eric.si/eric/random", {
+        const response = await fetch(`https://sitring.eric.si/${id}/random`, {
             method: 'GET',
         });
         const randomNeighbor = await response.json();
