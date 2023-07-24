@@ -22,6 +22,8 @@ GET `/id` will return info about the node with the id `id`.
 
 GET `/id/neighbors` will return info about the left and right node.
 
+GET `/id/random` will return a random node that isn't the id, or the id's neighbors.
+
 ## Usage Static-Sites
 
 You can easily show your webring through placing javascript in your ```<head>``` tag
