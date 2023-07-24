@@ -10,6 +10,7 @@ All majors, years, and alumnis welcome!
 Feel free to make a PR to add yourself to data.json if you are
 * A current student
 * An alumni
+* A professor
 * Anyone that had a duckcard
 
 By joining, you agree you will implement the webring in the footer of your website.
