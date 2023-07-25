@@ -6,7 +6,6 @@ use std::fs;
 use rand::seq::SliceRandom;
 use serde::{Deserialize,Serialize};
 use serde_json::json;
-use minifier::css::minify;
 use axum::{
     routing,
     extract::{Path,State},
@@ -60,8 +59,7 @@ fn init_ring() -> Vec<Node> {
 
 // Read js and minify it
 fn init_js() -> String {
-    let js_raw = fs::read_to_string("./js/webring.js").unwrap();
-    minify(&js_raw).unwrap().to_string()
+    fs::read_to_string("./js/webring.js").unwrap()
 }
 
 async fn get_js(State(state): State<SiteState>) -> (HeaderMap, String) {
