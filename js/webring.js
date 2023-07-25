@@ -96,7 +96,7 @@ function placeLinks(ringLinks){
     }
     //Insert a new sentence into the DOM below the links
     paragraph.appendChild(document.createElement("br"));
-    let sentence = document.createTextNode("This website is part of the Stevens Students Webring.");
+    let sentence = document.createTextNode("This website is part of the Stevens Community Webring.");
     paragraph.appendChild(sentence);
     document.getElementById("webring").appendChild(paragraph);
 }
