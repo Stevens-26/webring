@@ -57,6 +57,14 @@ you **must** have an element with ID "webring" in order to sucessfully output yo
 </html>
 ```
 
+## Styling
+Everything rendered within a static site will be within a `<p>` tag, in order to style your webring use the following in your CSS file:
+```css
+#webring p {
+  /*css here*/
+}
+```
+
 ## Other stuff
 
 MIT License
