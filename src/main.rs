@@ -6,12 +6,19 @@ use std::fs;
 use rand::seq::SliceRandom;
 use serde::{Deserialize,Serialize};
 use serde_json::json;
+use minifier::css::minify;
 use axum::{
     routing,
     extract::{Path,State},
     http::{StatusCode,header::HeaderMap},
     Router
 };
+
+#[derive(Clone)]
+struct SiteState {
+    ring: Vec<Node>,
+    js: String,
+}
 
 #[derive(Deserialize, Serialize)]
 #[derive(Clone)]
@@ -25,14 +32,19 @@ struct Node {
 
 #[tokio::main]
 async fn main() {
-    let ring = parse();
+    // replace this to init state with parse() and jsinit() with minifi
+    let state: SiteState = SiteState{
+        ring: init_ring(),
+        js: init_js(),
+    };
+
     let app = Router::new()
         .route("/", routing::get(get_all))
         .route("/:name", routing::get(get_node))
         .route("/:name/neighbors", routing::get(get_neighbor))
         .route("/:name/random", routing::get(get_random))
         .route("/webring.js", routing::get(get_js))
-        .with_state(ring);
+        .with_state(state);
 
     axum::Server::bind(&"0.0.0.0:3030".parse().unwrap())
         .serve(app.into_make_service())
@@ -40,19 +52,29 @@ async fn main() {
         .unwrap();
 }
 
-async fn get_js() -> (StatusCode, HeaderMap, String) {
+// Parse data.json into the ring
+fn init_ring() -> Vec<Node> {
+    let ring_raw = fs::read_to_string("data.json").expect("Failed to read data.json");
+    serde_json::from_str(&ring_raw).expect("Failed to parse data.json")
+}
+
+// Read js and minify it
+fn init_js() -> String {
+    let js_raw = fs::read_to_string("./js/webring.js").unwrap();
+    minify(&js_raw).unwrap().to_string()
+}
+
+async fn get_js(State(state): State<SiteState>) -> (HeaderMap, String) {
+    let js = state.js;
     let mut resp_header = HeaderMap::new();
     resp_header.insert("Content-Type", "application/javascript".parse().unwrap());
     resp_header.insert("Access-Control-Allow-Origin", "*".parse().unwrap());
-    if let Ok(js) = fs::read_to_string("./js/webring.js") {
-        return (StatusCode::OK, resp_header, js)
-    } else {
-        return (StatusCode::INTERNAL_SERVER_ERROR, resp_header, json!({"Error": "Internal Server Error"}).to_string())
-    }
+    (resp_header, js)
 }
 
 // get the whole webring
-async fn get_all(State(ring): State<Vec<Node>>) -> (StatusCode, HeaderMap, String) {
+async fn get_all(State(state): State<SiteState>) -> (StatusCode, HeaderMap, String) {
+    let ring = state.ring;
     let mut resp_header = HeaderMap::new();
     resp_header.insert("Content-Type", "application/json".parse().unwrap());
     resp_header.insert("Access-Control-Allow-Origin", "*".parse().unwrap());
@@ -65,7 +87,8 @@ async fn get_all(State(ring): State<Vec<Node>>) -> (StatusCode, HeaderMap, Strin
 }
 
 // get info ab a node
-async fn get_node(Path(name): Path<String>, State(ring): State<Vec<Node>>) -> (StatusCode, HeaderMap, String) {
+async fn get_node(Path(name): Path<String>, State(state): State<SiteState>) -> (StatusCode, HeaderMap, String) {
+    let ring = state.ring;
     let mut resp_header = HeaderMap::new();
     resp_header.insert("Content-Type", "application/json".parse().unwrap());
     resp_header.insert("Access-Control-Allow-Origin", "*".parse().unwrap());
@@ -79,7 +102,8 @@ async fn get_node(Path(name): Path<String>, State(ring): State<Vec<Node>>) -> (S
 }
 
 // get the neighbors of a ring node
-async fn get_neighbor(Path(name): Path<String>, State(ring): State<Vec<Node>>) -> (StatusCode, HeaderMap, String) {
+async fn get_neighbor(Path(name): Path<String>, State(state): State<SiteState>) -> (StatusCode, HeaderMap, String) {
+    let ring = state.ring;
     let mut resp_header = HeaderMap::new();
     resp_header.insert("Content-Type", "application/json".parse().unwrap());
     resp_header.insert("Access-Control-Allow-Origin", "*".parse().unwrap());
@@ -96,7 +120,8 @@ async fn get_neighbor(Path(name): Path<String>, State(ring): State<Vec<Node>>) -
 }
 
 // Get a random node that is not name
-async fn get_random(Path(name): Path<String>, State(ring): State<Vec<Node>>) -> (StatusCode, HeaderMap, String) {
+async fn get_random(Path(name): Path<String>, State(state): State<SiteState>) -> (StatusCode, HeaderMap, String) {
+    let ring = state.ring;
     let mut resp_header = HeaderMap::new();
     resp_header.insert("Content-Type", "application/json".parse().unwrap());
     resp_header.insert("Access-Control-Allow-Origin", "*".parse().unwrap());
@@ -116,12 +141,6 @@ async fn get_random(Path(name): Path<String>, State(ring): State<Vec<Node>>) -> 
         let resp = json!({"Error": "Not Found"}).to_string();
         (StatusCode::NOT_FOUND, resp_header, resp)
     }
-}
-
-// Parse data.json into the ring
-fn parse() -> Vec<Node> {
-    let ring_raw = fs::read_to_string("data.json").expect("Failed to read data.json");
-    serde_json::from_str(&ring_raw).expect("Failed to parse data.json")
 }
 
 // Get a node from the ring by it's name
