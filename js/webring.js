@@ -84,17 +84,21 @@ function placeLinks(ringLinks){
     let arrowRight = document.createTextNode("->");
     ringLinks.unshift(arrowLeft);
     ringLinks.push(arrowRight);
+
+    let paragraph = document.createElement('p');
+
     //Insert the links into the DOM
     for(var i = 0; i < ringLinks.length; i++) {
         if(i === 3) {
             ringLinks[i].addEventListener("click", createEventListener(ringLinks, i));
         }
-        document.getElementById("webring").appendChild(ringLinks[i]);
+        paragraph.appendChild(ringLinks[i]);
     }
     //Insert a new sentence into the DOM below the links
-    document.getElementById("webring").appendChild(document.createElement("br"));
+    paragraph.appendChild(document.createElement("br"));
     let sentence = document.createTextNode("This website is part of the Stevens Students Webring.");
-    document.getElementById("webring").appendChild(sentence);
+    paragraph.appendChild(sentence);
+    document.getElementById("webring").appendChild(paragraph);
 }
 
 //Entry point
