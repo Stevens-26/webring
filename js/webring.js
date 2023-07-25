@@ -47,7 +47,6 @@ function createLinks(data){
     let ringLinks = [];
 
     for(var i = 0; i < data.length; i++) {
-        console.log(data[i]);
         let link = window.document.createElement('a');
         link.href = data[i].url;
         link.innerText = data[i].name;
@@ -62,20 +61,44 @@ function createLinks(data){
     return ringLinks;
 }
 
+function createEventListener(ringLinks, i){
+    return async function(){
+        console.log("clicked");
+        let data = await getAllNeighbors();
+        console.log(data);
+        let newLink = window.document.createElement('a');
+        newLink.href = data[1].url;
+        newLink.innerText = data[1].name;
+        newLink.target = "_blank";
+        newLink.innerHTML = "Random";
+        this.replaceWith(newLink); // replace the current link element with newLink
+
+        newLink.addEventListener('click', createEventListener(ringLinks, i)); // Add the event listener to the newLink
+        ringLinks[i] = newLink; // Replace the link element in the array
+    }
+}
+
 function placeLinks(ringLinks){
     //Insert an arrow as the first and last element of the array
     let arrowLeft = document.createTextNode("<-");
     let arrowRight = document.createTextNode("->");
     ringLinks.unshift(arrowLeft);
     ringLinks.push(arrowRight);
+
+    let paragraph = document.createElement('p');
+
     //Insert the links into the DOM
     for(var i = 0; i < ringLinks.length; i++) {
-        document.getElementById("webring").appendChild(ringLinks[i]);
+        if(i === 3) {
+            ringLinks[i].addEventListener("click", createEventListener(ringLinks, i));
+        }
+        paragraph.appendChild(ringLinks[i]);
     }
     //Insert a new sentence into the DOM below the links
-    document.getElementById("webring").appendChild(document.createElement("br"));
-    let sentence = document.createTextNode("This website is part of the Stevens Students Webring.");
-    document.getElementById("webring").appendChild(sentence);
+    paragraph.appendChild(document.createElement("br"));
+    let sentence = document.createTextNode("This website is part of the Stevens Community Webring.");
+    paragraph.appendChild(sentence);
+    document.getElementById("webring").appendChild(paragraph);
 }
 
 //Entry point
