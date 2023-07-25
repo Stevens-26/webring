@@ -63,9 +63,7 @@ function createLinks(data){
 
 function createEventListener(ringLinks, i){
     return async function(){
-        console.log("clicked");
         let data = await getAllNeighbors();
-        console.log(data);
         let newLink = window.document.createElement('a');
         newLink.href = data[1].url;
         newLink.innerText = data[1].name;
