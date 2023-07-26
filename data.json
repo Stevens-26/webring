@@ -40,5 +40,10 @@
         "id":"patrick_hill",
         "name": "Patrick Hill",
         "url":"https://www.patrickhill.nyc/"
-    }  
+    }, 
+    {
+        "id":"mreiff",
+        "name": "Mitchell Reiff",
+        "url":"https://mreiff.dev/"
+    }
 ]
