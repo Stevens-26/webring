@@ -34,7 +34,7 @@ and then creating a div.
 in your HTML file:
 
 ```
-<script type="module" src="https://sitring.eric.si/webring.js?id=YOUR_ID_HERE" id="webringjs"><script>
+<script type="module" src="https://sitring.eric.si/webring.js?id=YOUR_ID_HERE" id="webringjs"></script>
 ```
 
 It is important that you have the script ID as "webringjs" in order to query your ID succesfully. Additionally,
