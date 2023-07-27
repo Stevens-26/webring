@@ -32,18 +32,23 @@
         "url": "https://jhg.app"
     },
     {
-        "id":"phill52",
+        "id": "phill52",
         "name": "Phillip Anerine",
-        "url":"https://www.phillipanerine.com/"
-    }, 
+        "url": "https://www.phillipanerine.com/"
+    },
     {
-        "id":"patrick_hill",
+        "id": "patrick_hill",
         "name": "Patrick Hill",
-        "url":"https://www.patrickhill.nyc/"
-    }, 
+        "url": "https://www.patrickhill.nyc/"
+    },
     {
-        "id":"mreiff",
+        "id": "mreiff",
         "name": "Mitchell Reiff",
-        "url":"https://mreiff.dev/"
+        "url": "https://mreiff.dev/"
+    },
+    {
+        "id": "nad2040",
+        "name": "Dan Liu",
+        "url": "https://nad2040.github.io/"
     }
 ]
