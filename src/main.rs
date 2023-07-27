@@ -10,7 +10,7 @@ use tower_http::cors::CorsLayer;
 use axum::{
     routing,
     extract::{Path,State},
-    http::StatusCode,
+    http::{StatusCode,header::HeaderMap},
     Router
 };
 
@@ -64,9 +64,11 @@ fn init_js() -> String {
     fs::read_to_string("./js/webring.js").unwrap()
 }
 
-async fn get_js(State(state): State<SiteState>) -> String {
+async fn get_js(State(state): State<SiteState>) -> (HeaderMap, String) {
     let js = state.js;
-    js
+    let mut resp_header = HeaderMap::new();
+    resp_header.insert("Content-Type", "application/javascript".parse().unwrap());
+    (resp_header, js)
 }
 
 // get the whole webring
