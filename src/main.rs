@@ -6,10 +6,11 @@ use std::fs;
 use rand::seq::SliceRandom;
 use serde::{Deserialize,Serialize};
 use serde_json::json;
+use tower_http::cors::CorsLayer;
 use axum::{
     routing,
     extract::{Path,State},
-    http::{StatusCode,header::HeaderMap},
+    http::StatusCode,
     Router
 };
 
@@ -43,6 +44,7 @@ async fn main() {
         .route("/:name/neighbors", routing::get(get_neighbor))
         .route("/:name/random", routing::get(get_random))
         .route("/webring.js", routing::get(get_js))
+        .layer(CorsLayer::permissive())
         .with_state(state);
 
     axum::Server::bind(&"0.0.0.0:3030".parse().unwrap())
@@ -62,102 +64,66 @@ fn init_js() -> String {
     fs::read_to_string("./js/webring.js").unwrap()
 }
 
-async fn get_js(State(state): State<SiteState>) -> (HeaderMap, String) {
+async fn get_js(State(state): State<SiteState>) -> String {
     let js = state.js;
-    let mut resp_header = HeaderMap::new();
-    resp_header.insert("Content-Type", "application/javascript".parse().unwrap());
-    resp_header.insert("Access-Control-Allow-Origin", "*".parse().unwrap());
-    resp_header.insert("Access-Control-Allow-Credentials", "true".parse().unwrap());
-    resp_header.insert("Access-Control-Allow-Methods", "*".parse().unwrap());
-    resp_header.insert("Access-Control-Allow-Headers", "*".parse().unwrap());
-    resp_header.insert("Access-Control-Expose-Headers", "*".parse().unwrap());
-    (resp_header, js)
+    js
 }
 
 // get the whole webring
-async fn get_all(State(state): State<SiteState>) -> (StatusCode, HeaderMap, String) {
+async fn get_all(State(state): State<SiteState>) -> (StatusCode, String) {
     let ring = state.ring;
-    let mut resp_header = HeaderMap::new();
-    resp_header.insert("Content-Type", "application/json".parse().unwrap());
-    resp_header.insert("Access-Control-Allow-Origin", "*".parse().unwrap());
-    resp_header.insert("Access-Control-Allow-Credentials", "true".parse().unwrap());
-    resp_header.insert("Access-Control-Allow-Methods", "*".parse().unwrap());
-    resp_header.insert("Access-Control-Allow-Headers", "*".parse().unwrap());
-    resp_header.insert("Access-Control-Expose-Headers", "*".parse().unwrap());
     if let Ok(string) = serde_json::to_string(&ring) {
-        (StatusCode::OK, resp_header, string)
+        (StatusCode::OK, string)
     } else {
         let resp = json!({"Error": "Internal Server Error"}).to_string();
-        (StatusCode::INTERNAL_SERVER_ERROR, resp_header, resp)
+        (StatusCode::INTERNAL_SERVER_ERROR, resp)
     }
 }
 
 // get info ab a node
-async fn get_node(Path(name): Path<String>, State(state): State<SiteState>) -> (StatusCode, HeaderMap, String) {
+async fn get_node(Path(name): Path<String>, State(state): State<SiteState>) -> (StatusCode, String) {
     let ring = state.ring;
-    let mut resp_header = HeaderMap::new();
-    resp_header.insert("Content-Type", "application/json".parse().unwrap());
-    resp_header.insert("Access-Control-Allow-Origin", "*".parse().unwrap());
-    resp_header.insert("Access-Control-Allow-Credentials", "true".parse().unwrap());
-    resp_header.insert("Access-Control-Allow-Methods", "*".parse().unwrap());
-    resp_header.insert("Access-Control-Allow-Headers", "*".parse().unwrap());
-    resp_header.insert("Access-Control-Expose-Headers", "*".parse().unwrap());
     if let Some(node) = get(name, ring) {
-        (StatusCode::OK, resp_header, serde_json::to_string(&node).unwrap())
+        (StatusCode::OK, serde_json::to_string(&node).unwrap())
     } else {
         // make a simple json with error: not found
         let resp = json!({"Error": "Not Found"}).to_string();
-        (StatusCode::NOT_FOUND, resp_header, resp)
+        (StatusCode::NOT_FOUND, resp)
     }
 }
 
 // get the neighbors of a ring node
-async fn get_neighbor(Path(name): Path<String>, State(state): State<SiteState>) -> (StatusCode, HeaderMap, String) {
+async fn get_neighbor(Path(name): Path<String>, State(state): State<SiteState>) -> (StatusCode, String) {
     let ring = state.ring;
-    let mut resp_header = HeaderMap::new();
-    resp_header.insert("Content-Type", "application/json".parse().unwrap());
-    resp_header.insert("Access-Control-Allow-Origin", "*".parse().unwrap());
-    resp_header.insert("Access-Control-Allow-Credentials", "true".parse().unwrap());
-    resp_header.insert("Access-Control-Allow-Methods", "*".parse().unwrap());
-    resp_header.insert("Access-Control-Allow-Headers", "*".parse().unwrap());
-    resp_header.insert("Access-Control-Expose-Headers", "*".parse().unwrap());
     if let Some(node) = get(name, ring.to_owned()) {
         let index = ring.iter().position(|x| x.id == node.id).unwrap();
         let prev = ring.get((index + ring.len() - 1) % ring.len()).unwrap();
         let next = ring.get((index + 1) % ring.len()).unwrap();
         let neighbors = vec![prev, next];
-        (StatusCode::OK, resp_header, serde_json::to_string(&neighbors).unwrap())
+        (StatusCode::OK,  serde_json::to_string(&neighbors).unwrap())
     } else {
         let resp = json!({"Error": "Not Found"}).to_string();
-        (StatusCode::NOT_FOUND, resp_header, resp)
+        (StatusCode::NOT_FOUND, resp)
     }
 }
 
 // Get a random node that is not name
-async fn get_random(Path(name): Path<String>, State(state): State<SiteState>) -> (StatusCode, HeaderMap, String) {
+async fn get_random(Path(name): Path<String>, State(state): State<SiteState>) -> (StatusCode, String) {
     let ring = state.ring;
-    let mut resp_header = HeaderMap::new();
-    resp_header.insert("Content-Type", "application/json".parse().unwrap());
-    resp_header.insert("Access-Control-Allow-Origin", "*".parse().unwrap());
-    resp_header.insert("Access-Control-Allow-Credentials", "true".parse().unwrap());
-    resp_header.insert("Access-Control-Allow-Methods", "*".parse().unwrap());
-    resp_header.insert("Access-Control-Allow-Headers", "*".parse().unwrap());
-    resp_header.insert("Access-Control-Expose-Headers", "*".parse().unwrap());
     if let Some(node) = get(name.to_owned(), ring.to_owned()) {
         let index = ring.iter().position(|x| x.id == node.id).unwrap();
         let prev = ring.get((index + ring.len() - 1) % ring.len()).unwrap();
         let next = ring.get((index + 1) % ring.len()).unwrap();
-
         let ring: Vec<Node> = ring.clone().iter()
             .filter(|&node| node.id != name)
             .filter(|&node| node.id != prev.id)
             .filter(|&node| node.id != next.id)
             .cloned().collect();
         let random: &Node = ring.choose(&mut rand::thread_rng()).unwrap();
-        (StatusCode::OK, resp_header, serde_json::to_string(random).unwrap())
+        (StatusCode::OK, serde_json::to_string(random).unwrap())
     } else {
         let resp = json!({"Error": "Not Found"}).to_string();
-        (StatusCode::NOT_FOUND, resp_header, resp)
+        (StatusCode::NOT_FOUND, resp)
     }
 }
 
