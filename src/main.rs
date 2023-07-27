@@ -67,6 +67,10 @@ async fn get_js(State(state): State<SiteState>) -> (HeaderMap, String) {
     let mut resp_header = HeaderMap::new();
     resp_header.insert("Content-Type", "application/javascript".parse().unwrap());
     resp_header.insert("Access-Control-Allow-Origin", "*".parse().unwrap());
+    resp_header.insert("Access-Control-Allow-Credentials", "true".parse().unwrap());
+    resp_header.insert("Access-Control-Allow-Methods", "*".parse().unwrap());
+    resp_header.insert("Access-Control-Allow-Headers", "*".parse().unwrap());
+    resp_header.insert("Access-Control-Expose-Headers", "*".parse().unwrap());
     (resp_header, js)
 }
 
@@ -76,6 +80,10 @@ async fn get_all(State(state): State<SiteState>) -> (StatusCode, HeaderMap, Stri
     let mut resp_header = HeaderMap::new();
     resp_header.insert("Content-Type", "application/json".parse().unwrap());
     resp_header.insert("Access-Control-Allow-Origin", "*".parse().unwrap());
+    resp_header.insert("Access-Control-Allow-Credentials", "true".parse().unwrap());
+    resp_header.insert("Access-Control-Allow-Methods", "*".parse().unwrap());
+    resp_header.insert("Access-Control-Allow-Headers", "*".parse().unwrap());
+    resp_header.insert("Access-Control-Expose-Headers", "*".parse().unwrap());
     if let Ok(string) = serde_json::to_string(&ring) {
         (StatusCode::OK, resp_header, string)
     } else {
@@ -90,6 +98,10 @@ async fn get_node(Path(name): Path<String>, State(state): State<SiteState>) -> (
     let mut resp_header = HeaderMap::new();
     resp_header.insert("Content-Type", "application/json".parse().unwrap());
     resp_header.insert("Access-Control-Allow-Origin", "*".parse().unwrap());
+    resp_header.insert("Access-Control-Allow-Credentials", "true".parse().unwrap());
+    resp_header.insert("Access-Control-Allow-Methods", "*".parse().unwrap());
+    resp_header.insert("Access-Control-Allow-Headers", "*".parse().unwrap());
+    resp_header.insert("Access-Control-Expose-Headers", "*".parse().unwrap());
     if let Some(node) = get(name, ring) {
         (StatusCode::OK, resp_header, serde_json::to_string(&node).unwrap())
     } else {
@@ -105,6 +117,10 @@ async fn get_neighbor(Path(name): Path<String>, State(state): State<SiteState>) 
     let mut resp_header = HeaderMap::new();
     resp_header.insert("Content-Type", "application/json".parse().unwrap());
     resp_header.insert("Access-Control-Allow-Origin", "*".parse().unwrap());
+    resp_header.insert("Access-Control-Allow-Credentials", "true".parse().unwrap());
+    resp_header.insert("Access-Control-Allow-Methods", "*".parse().unwrap());
+    resp_header.insert("Access-Control-Allow-Headers", "*".parse().unwrap());
+    resp_header.insert("Access-Control-Expose-Headers", "*".parse().unwrap());
     if let Some(node) = get(name, ring.to_owned()) {
         let index = ring.iter().position(|x| x.id == node.id).unwrap();
         let prev = ring.get((index + ring.len() - 1) % ring.len()).unwrap();
@@ -123,6 +139,10 @@ async fn get_random(Path(name): Path<String>, State(state): State<SiteState>) ->
     let mut resp_header = HeaderMap::new();
     resp_header.insert("Content-Type", "application/json".parse().unwrap());
     resp_header.insert("Access-Control-Allow-Origin", "*".parse().unwrap());
+    resp_header.insert("Access-Control-Allow-Credentials", "true".parse().unwrap());
+    resp_header.insert("Access-Control-Allow-Methods", "*".parse().unwrap());
+    resp_header.insert("Access-Control-Allow-Headers", "*".parse().unwrap());
+    resp_header.insert("Access-Control-Expose-Headers", "*".parse().unwrap());
     if let Some(node) = get(name.to_owned(), ring.to_owned()) {
         let index = ring.iter().position(|x| x.id == node.id).unwrap();
         let prev = ring.get((index + ring.len() - 1) % ring.len()).unwrap();
