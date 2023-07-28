@@ -94,8 +94,14 @@ function placeLinks(ringLinks){
     }
     //Insert a new sentence into the DOM below the links
     paragraph.appendChild(document.createElement("br"));
-    let sentence = document.createTextNode("This website is part of the Stevens Community Webring.");
-    paragraph.appendChild(sentence);
+    //let sentence = document.createTextNode("This website is part of the Stevens Community Webring.");
+    //paragraph.appendChild(sentence);
+    let link = window.document.createElement('a');
+    link.href = "https://github.com/Stevens-26/webring/";
+    link.innerText = "This website is part of the Stevens Community Webring.";
+    link.target = "_blank";
+    link.innerHTML = "This website is part of the Stevens Community Webring.";
+    paragraph.appendChild(link)
     document.getElementById("webring").appendChild(paragraph);
 }
 
